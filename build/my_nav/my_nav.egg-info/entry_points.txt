@@ -1,0 +1,5 @@
+[console_scripts]
+costmap = my_nav.costmap:main
+planner = my_nav.planner:main
+tracker = my_nav.tracker:main
+

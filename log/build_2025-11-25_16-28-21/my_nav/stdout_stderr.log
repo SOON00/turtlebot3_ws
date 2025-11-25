@@ -1,0 +1,17 @@
+running develop
+running egg_info
+writing my_nav.egg-info/PKG-INFO
+writing dependency_links to my_nav.egg-info/dependency_links.txt
+writing entry points to my_nav.egg-info/entry_points.txt
+writing requirements to my_nav.egg-info/requires.txt
+writing top-level names to my_nav.egg-info/top_level.txt
+reading manifest file 'my_nav.egg-info/SOURCES.txt'
+writing manifest file 'my_nav.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/soon/turtlebot3_ws/install/my_nav/lib/python3.10/site-packages/my-nav.egg-link (link to .)
+Installing costmap script to /home/soon/turtlebot3_ws/install/my_nav/lib/my_nav
+Installing planner script to /home/soon/turtlebot3_ws/install/my_nav/lib/my_nav
+
+Installed /home/soon/turtlebot3_ws/build/my_nav
+running symlink_data
+error: can't copy '/home/soon/turtlebot3_ws/build/my_nav/launch/tb3_nav.launch.py': doesn't exist or not a regular file

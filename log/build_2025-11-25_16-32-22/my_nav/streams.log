@@ -1,0 +1,20 @@
+[0.543s] Invoking command in '/home/soon/turtlebot3_ws/build/my_nav': PYTHONPATH=/home/soon/turtlebot3_ws/build/my_nav/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/soon/turtlebot3_ws/install/my_nav/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/soon/turtlebot3_ws/build/my_nav/build --no-deps symlink_data
+[0.683s] running develop
+[0.786s] running egg_info
+[0.789s] writing my_nav.egg-info/PKG-INFO
+[0.789s] writing dependency_links to my_nav.egg-info/dependency_links.txt
+[0.789s] writing entry points to my_nav.egg-info/entry_points.txt
+[0.789s] writing requirements to my_nav.egg-info/requires.txt
+[0.789s] writing top-level names to my_nav.egg-info/top_level.txt
+[0.791s] reading manifest file 'my_nav.egg-info/SOURCES.txt'
+[0.791s] writing manifest file 'my_nav.egg-info/SOURCES.txt'
+[0.792s] running build_ext
+[0.792s] Creating /home/soon/turtlebot3_ws/install/my_nav/lib/python3.10/site-packages/my-nav.egg-link (link to .)
+[0.792s] Installing costmap script to /home/soon/turtlebot3_ws/install/my_nav/lib/my_nav
+[0.792s] Installing planner script to /home/soon/turtlebot3_ws/install/my_nav/lib/my_nav
+[0.792s] Installing tracker script to /home/soon/turtlebot3_ws/install/my_nav/lib/my_nav
+[0.793s] 
+[0.793s] Installed /home/soon/turtlebot3_ws/build/my_nav
+[0.793s] running symlink_data
+[0.793s] error: can't copy '/home/soon/turtlebot3_ws/build/my_nav/launch/tb3_nav.launch.py': doesn't exist or not a regular file
+[0.815s] Invoked command in '/home/soon/turtlebot3_ws/build/my_nav' returned '1': PYTHONPATH=/home/soon/turtlebot3_ws/build/my_nav/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/soon/turtlebot3_ws/install/my_nav/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/soon/turtlebot3_ws/build/my_nav/build --no-deps symlink_data

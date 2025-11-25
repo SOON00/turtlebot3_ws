@@ -1,0 +1,19 @@
+[0.571s] Invoking command in '/home/soon/turtlebot3_ws/build/my_nav': PYTHONPATH=/home/soon/turtlebot3_ws/build/my_nav/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/soon/turtlebot3_ws/install/my_nav/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/soon/turtlebot3_ws/build/my_nav/build --no-deps symlink_data
+[0.724s] running develop
+[0.831s] running egg_info
+[0.834s] writing my_nav.egg-info/PKG-INFO
+[0.834s] writing dependency_links to my_nav.egg-info/dependency_links.txt
+[0.835s] writing entry points to my_nav.egg-info/entry_points.txt
+[0.835s] writing requirements to my_nav.egg-info/requires.txt
+[0.835s] writing top-level names to my_nav.egg-info/top_level.txt
+[0.836s] reading manifest file 'my_nav.egg-info/SOURCES.txt'
+[0.836s] writing manifest file 'my_nav.egg-info/SOURCES.txt'
+[0.837s] running build_ext
+[0.837s] Creating /home/soon/turtlebot3_ws/install/my_nav/lib/python3.10/site-packages/my-nav.egg-link (link to .)
+[0.838s] Installing basic_nav script to /home/soon/turtlebot3_ws/install/my_nav/lib/my_nav
+[0.838s] Installing costmap script to /home/soon/turtlebot3_ws/install/my_nav/lib/my_nav
+[0.838s] 
+[0.838s] Installed /home/soon/turtlebot3_ws/build/my_nav
+[0.838s] running symlink_data
+[0.838s] symbolically linking /home/soon/turtlebot3_ws/build/my_nav/launch/costmap.launch.py -> /home/soon/turtlebot3_ws/install/my_nav/share/my_nav/launch
+[0.860s] Invoked command in '/home/soon/turtlebot3_ws/build/my_nav' returned '0': PYTHONPATH=/home/soon/turtlebot3_ws/build/my_nav/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/soon/turtlebot3_ws/install/my_nav/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/soon/turtlebot3_ws/build/my_nav/build --no-deps symlink_data

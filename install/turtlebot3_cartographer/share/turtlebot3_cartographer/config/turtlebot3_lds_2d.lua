@@ -1,0 +1,1 @@
+/home/soon/turtlebot3_ws/src/turtlebot3_cartographer/config/turtlebot3_lds_2d.lua
