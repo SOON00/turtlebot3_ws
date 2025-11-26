@@ -68,6 +68,27 @@ class AStarNav(Node):
         start_cell = self.world_to_grid(*start)
         goal_cell = self.world_to_grid(*self.goal)
 
+        # 🚀 시작 위치가 장애물이라면 주변 유효 셀로 이동
+        if self.costmap[start_cell[1], start_cell[0]] > 50:
+            found = False
+            h, w = self.costmap.shape
+            for r in range(1, 10):  # 최대 반경 10셀
+                for dx in range(-r, r+1):
+                    for dy in range(-r, r+1):
+                        nx, ny = start_cell[0]+dx, start_cell[1]+dy
+                        if 0 <= nx < w and 0 <= ny < h and self.costmap[ny, nx] <= 50:
+                            start_cell = (nx, ny)
+                            found = True
+                            self.get_logger().info(f"Start cell was invalid. Shifted to nearby valid cell: {start_cell}")
+                            break
+                    if found:
+                        break
+                if found:
+                    break
+            if not found:
+                self.get_logger().warn("No valid start cell found near robot!")
+                return
+
         path_cells = self.a_star(self.costmap, start_cell, goal_cell)
         if path_cells is None:
             self.get_logger().warn('No path found!')
@@ -144,6 +165,23 @@ class AStarNav(Node):
         path_msg = Path()
         path_msg.header.frame_id = 'map'
         path_msg.header.stamp = self.get_clock().now().to_msg()
+
+        # 1️⃣ 현재 로봇 위치를 경로의 첫 점으로 추가
+        try:
+            trans = self.tf_buffer.lookup_transform('map', 'base_footprint', rclpy.time.Time())
+            robot_x = trans.transform.translation.x
+            robot_y = trans.transform.translation.y
+            pose = PoseStamped()
+            pose.header.frame_id = 'map'
+            pose.header.stamp = path_msg.header.stamp
+            pose.pose.position.x = robot_x
+            pose.pose.position.y = robot_y
+            pose.pose.orientation.w = 1.0
+            path_msg.poses.append(pose)
+        except TransformException:
+            self.get_logger().warn('Cannot get robot position from TF for path start.')
+
+        # 2️⃣ 기존 경로 추가
         for gx, gy in path_cells:
             x, y = self.grid_to_world(gx, gy)
             pose = PoseStamped()
@@ -153,8 +191,8 @@ class AStarNav(Node):
             pose.pose.position.y = y
             pose.pose.orientation.w = 1.0
             path_msg.poses.append(pose)
-        self.path_pub.publish(path_msg)
 
+        self.path_pub.publish(path_msg)
     # Control loop
     def control_loop(self):
         if self.path is None or len(self.path) == 0:

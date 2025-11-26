@@ -2,11 +2,13 @@ package.xml
 setup.cfg
 setup.py
 launch/costmap.launch.py
+launch/mpc.launch.py
 launch/my_nav.launch.py
 launch/planner.launch.py
 launch/tracker.launch.py
 my_nav/__init__.py
 my_nav/costmap.py
+my_nav/mpc.py
 my_nav/planner.py
 my_nav/tracker.py
 my_nav.egg-info/PKG-INFO

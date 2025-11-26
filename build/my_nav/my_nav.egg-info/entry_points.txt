@@ -1,5 +1,6 @@
 [console_scripts]
 costmap = my_nav.costmap:main
+mpc = my_nav.mpc:main
 planner = my_nav.planner:main
 tracker = my_nav.tracker:main
 

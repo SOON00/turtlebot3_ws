@@ -27,6 +27,7 @@ setup(
             'planner = my_nav.planner:main',
             'costmap = my_nav.costmap:main',
             'tracker = my_nav.tracker:main',
+            'mpc = my_nav.mpc:main',
         ],
     },
 )

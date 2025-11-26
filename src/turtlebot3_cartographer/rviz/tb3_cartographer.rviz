@@ -7,7 +7,7 @@ Panels:
         - /Global Options1
         - /LaserScan1/Topic1
       Splitter Ratio: 0.3916349709033966
-    Tree Height: 774
+    Tree Height: 363
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -504,8 +504,8 @@ Visualization Manager:
       Scale: 141.1679229736328
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz_default_plugins)
-      X: 1.657259464263916
-      Y: 0.5551432371139526
+      X: -0.06407845765352249
+      Y: 0.5325184464454651
     Saved: ~
 Window Geometry:
   Displays:
