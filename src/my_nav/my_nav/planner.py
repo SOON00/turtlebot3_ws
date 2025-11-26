@@ -8,6 +8,7 @@ import math
 import heapq
 import tf2_ros
 from tf2_ros import TransformException
+from scipy.interpolate import CubicSpline
 
 class AStarNav(Node):
     def __init__(self):
@@ -32,6 +33,10 @@ class AStarNav(Node):
         self.goal = None
         self.path = []
 
+        # Parameters
+        self.obstacle_cost_threshold = 50  # cost > this considered non-traversable
+        self.max_goal_search_radius_cells = 200  # max search radius for safe goal (in cells)
+
         # Control loop timer
         self.timer = self.create_timer(0.2, self.control_loop)
 
@@ -46,13 +51,13 @@ class AStarNav(Node):
             self.get_logger().info("Replanning due to updated costmap.")
             self.plan_path()
 
-
     def goal_callback(self, msg):
         self.goal = (msg.pose.position.x, msg.pose.position.y)
         self.get_logger().info(f'Goal received: x={self.goal[0]:.2f}, y={self.goal[1]:.2f}')
         if self.costmap is not None:
             self.plan_path()
 
+    # ---------------------- Planner ----------------------
     def plan_path(self):
         if self.costmap is None or self.goal is None:
             return
@@ -68,18 +73,26 @@ class AStarNav(Node):
         start_cell = self.world_to_grid(*start)
         goal_cell = self.world_to_grid(*self.goal)
 
-        # 🚀 시작 위치가 장애물이라면 주변 유효 셀로 이동
-        if self.costmap[start_cell[1], start_cell[0]] > 50:
+        h, w = self.costmap.shape
+
+        # clamp goal if outside map bounds
+        gx = min(max(goal_cell[0], 0), w-1)
+        gy = min(max(goal_cell[1], 0), h-1)
+        if (gx, gy) != goal_cell:
+            self.get_logger().info(f"Goal outside map bounds. Clamped {goal_cell} -> {(gx, gy)}")
+            goal_cell = (gx, gy)
+
+        # If start cell invalid (obstacle) try to find nearby valid start
+        if not (0 <= start_cell[0] < w and 0 <= start_cell[1] < h) or self.costmap[start_cell[1], start_cell[0]] > self.obstacle_cost_threshold:
             found = False
-            h, w = self.costmap.shape
-            for r in range(1, 10):  # 최대 반경 10셀
+            for r in range(1, 10):
                 for dx in range(-r, r+1):
                     for dy in range(-r, r+1):
                         nx, ny = start_cell[0]+dx, start_cell[1]+dy
-                        if 0 <= nx < w and 0 <= ny < h and self.costmap[ny, nx] <= 50:
+                        if 0 <= nx < w and 0 <= ny < h and self.costmap[ny, nx] <= self.obstacle_cost_threshold:
                             start_cell = (nx, ny)
                             found = True
-                            self.get_logger().info(f"Start cell was invalid. Shifted to nearby valid cell: {start_cell}")
+                            self.get_logger().info(f"Start cell shifted to nearby valid cell: {start_cell}")
                             break
                     if found:
                         break
@@ -89,16 +102,67 @@ class AStarNav(Node):
                 self.get_logger().warn("No valid start cell found near robot!")
                 return
 
+        # If goal cell is an obstacle/high cost, search nearest safe cell
+        if self.costmap[goal_cell[1], goal_cell[0]] > self.obstacle_cost_threshold:
+            safe = self.find_nearest_safe_cell(goal_cell, self.obstacle_cost_threshold, self.max_goal_search_radius_cells)
+            if safe is None:
+                self.get_logger().warn("Goal in obstacle and no nearby safe cell found. Aborting plan.")
+                return
+            else:
+                self.get_logger().info(f"Goal at {goal_cell} is occupied/high-cost. Using nearby safe goal {safe} instead.")
+                goal_cell = safe
+
+        # A* 경로
         path_cells = self.a_star(self.costmap, start_cell, goal_cell)
         if path_cells is None:
             self.get_logger().warn('No path found!')
             return
 
-        self.path = path_cells
-        self.get_logger().info(f'Path planned with {len(self.path)} cells.')
-        self.publish_path(path_cells)
+        # Cubic Spline smoothing
+        smooth_path_points = self.smooth_path(path_cells)
 
-    # World <-> Grid conversion
+        self.path = smooth_path_points
+        self.get_logger().info(f'Path planned with {len(self.path)} points (smoothed).')
+        self.publish_path(smooth_path_points)
+
+    def find_nearest_safe_cell(self, goal_cell, cost_threshold, max_radius):
+        """목표 셀이 위험한 경우, 가장 가까운 안전한 셀을 우선순위 큐(거리)로 탐색해서 반환.
+           실패하면 None 반환.
+        """
+        h, w = self.costmap.shape
+        gx0, gy0 = goal_cell
+
+        visited = set()
+        heap = []
+        # push initial neighbors including goal itself
+        def push_cell(nx, ny):
+            if (nx, ny) in visited:
+                return
+            if not (0 <= nx < w and 0 <= ny < h):
+                return
+            visited.add((nx, ny))
+            dist = math.hypot(nx - gx0, ny - gy0)
+            heapq.heappush(heap, (dist, nx, ny))
+
+        push_cell(gx0, gy0)
+
+        while heap:
+            dist, nx, ny = heapq.heappop(heap)
+            # radius limit
+            if dist > max_radius:
+                break
+            # check cost
+            if self.costmap[ny, nx] <= cost_threshold:
+                return (nx, ny)
+            # expand neighbors (4-connected to limit branching; could use 8)
+            push_cell(nx+1, ny)
+            push_cell(nx-1, ny)
+            push_cell(nx, ny+1)
+            push_cell(nx, ny-1)
+
+        return None
+
+    # ---------------------- World/Grid Conversion ----------------------
     def world_to_grid(self, x, y):
         gx = int((x - self.origin[0]) / self.resolution)
         gy = int((y - self.origin[1]) / self.resolution)
@@ -109,7 +173,7 @@ class AStarNav(Node):
         y = gy * self.resolution + self.origin[1]
         return (x, y)
 
-    # Simple 8-connected A*
+    # ---------------------- A* Algorithm ----------------------
     def a_star(self, grid, start, goal):
         h, w = grid.shape
         open_set = []
@@ -120,7 +184,6 @@ class AStarNav(Node):
         def heuristic(a, b):
             return math.hypot(b[0]-a[0], b[1]-a[1])
 
-        # 8-connected movement
         neighbors = [
             (-1, 0), (1, 0), (0, -1), (0, 1),
             (-1, -1), (-1, 1), (1, -1), (1, 1)
@@ -137,20 +200,12 @@ class AStarNav(Node):
 
             for dx, dy in neighbors:
                 nx, ny = current[0] + dx, current[1] + dy
-
-                # bounds check
                 if not (0 <= nx < w and 0 <= ny < h):
                     continue
-
-                # obstacle check (inflation 포함)
-                if grid[ny, nx] > 50:
+                if grid[ny, nx] > self.obstacle_cost_threshold:
                     continue
-
-                # movement cost
-                move_cost = math.hypot(dx, dy)  # 1 or √2
-
+                move_cost = math.hypot(dx, dy)
                 tentative_g = g_score[current] + move_cost
-
                 if (nx, ny) not in g_score or tentative_g < g_score[(nx, ny)]:
                     g_score[(nx, ny)] = tentative_g
                     f_score = tentative_g + heuristic((nx, ny), goal)
@@ -159,14 +214,47 @@ class AStarNav(Node):
 
         return None
 
+    # ---------------------- Cubic Spline Smoothing ----------------------
+    def smooth_path(self, path_cells):
+        if not path_cells or len(path_cells) < 3:
+            # 너무 짧으면 smoothing 안함
+            return [self.grid_to_world(gx, gy) for gx, gy in path_cells]
 
-    # Publish path for RViz visualization
-    def publish_path(self, path_cells):
+        # grid -> world
+        xs = []
+        ys = []
+        for gx, gy in path_cells:
+            x, y = self.grid_to_world(gx, gy)
+            xs.append(x)
+            ys.append(y)
+
+        xs = np.array(xs)
+        ys = np.array(ys)
+
+        # Arc-length parameterization
+        ds = np.sqrt(np.diff(xs)**2 + np.diff(ys)**2)
+        s = np.insert(np.cumsum(ds), 0, 0)
+
+        # Cubic spline
+        cs_x = CubicSpline(s, xs)
+        cs_y = CubicSpline(s, ys)
+
+        # Sample along the spline
+        # ensure at least a few samples; sample spacing = resolution
+        n_samples = max(2, int(s[-1]/self.resolution) + 1)
+        s_new = np.linspace(0, s[-1], n_samples)
+        x_new = cs_x(s_new)
+        y_new = cs_y(s_new)
+
+        return list(zip(x_new, y_new))
+
+    # ---------------------- Path Publisher ----------------------
+    def publish_path(self, path_points):
         path_msg = Path()
         path_msg.header.frame_id = 'map'
         path_msg.header.stamp = self.get_clock().now().to_msg()
 
-        # 1️⃣ 현재 로봇 위치를 경로의 첫 점으로 추가
+        # Current robot position as first point
         try:
             trans = self.tf_buffer.lookup_transform('map', 'base_footprint', rclpy.time.Time())
             robot_x = trans.transform.translation.x
@@ -181,9 +269,8 @@ class AStarNav(Node):
         except TransformException:
             self.get_logger().warn('Cannot get robot position from TF for path start.')
 
-        # 2️⃣ 기존 경로 추가
-        for gx, gy in path_cells:
-            x, y = self.grid_to_world(gx, gy)
+        # Add smooth path points
+        for x, y in path_points:
             pose = PoseStamped()
             pose.header.frame_id = 'map'
             pose.header.stamp = path_msg.header.stamp
@@ -193,10 +280,10 @@ class AStarNav(Node):
             path_msg.poses.append(pose)
 
         self.path_pub.publish(path_msg)
-    # Control loop
+
+    # ---------------------- Control Loop ----------------------
     def control_loop(self):
         if self.path is None or len(self.path) == 0:
-            twist = Twist()
             self.get_logger().info('[No path]')
             return
 
@@ -210,8 +297,8 @@ class AStarNav(Node):
             return
 
         # Next waypoint
-        next_cell = self.path[0]
-        goal_x, goal_y = self.grid_to_world(*next_cell)
+        next_point = self.path[0]
+        goal_x, goal_y = next_point
         dx = goal_x - robot_x
         dy = goal_y - robot_y
         distance = math.hypot(dx, dy)
@@ -237,4 +324,3 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
-

@@ -2,7 +2,7 @@
 import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import Path
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, PoseStamped
 import tf2_ros
 from tf2_ros import TransformException
 import math
@@ -13,6 +13,7 @@ class PurePursuitTracker(Node):
 
         # --- Subscribers & Publishers ---
         self.create_subscription(Path, "/planned_path", self.path_callback, 10)
+        self.create_subscription(PoseStamped, "/move_base_simple/goal", self.goal_callback, 10)
         self.cmd_pub = self.create_publisher(Twist, "/cmd_vel", 10)
 
         # --- TF Listener ---
@@ -24,8 +25,8 @@ class PurePursuitTracker(Node):
         self.lookahead = 0.6  # 0.5~1.0m recommended for TB3
 
         # --- Rotation flags ---
-        self.rotating_to_target = False  # 초기에는 회전하지 않음
-        self.rotation_done_once = False  # path마다 1회만 회전
+        self.rotating_to_target = False  # goal 들어올 때 1회 회전
+        self.rotation_done_once = False
 
         # --- Control timer ---
         self.timer = self.create_timer(0.05, self.control_loop)
@@ -34,25 +35,24 @@ class PurePursuitTracker(Node):
         self.max_v = 0.25  # m/s
         self.max_w = 1.2   # rad/s
 
-    def path_callback(self, msg):
+    def goal_callback(self, msg: PoseStamped):
+        """새 goal이 들어오면 제자리 회전 준비"""
+        self.rotating_to_target = True
+        self.rotation_done_once = False
+        self.get_logger().info(f"[Goal] New goal received at ({msg.pose.position.x:.2f}, {msg.pose.position.y:.2f})")
+
+    def path_callback(self, msg: Path):
+        """경로 업데이트 (회전 플래그는 건드리지 않음)"""
         self.path = [(p.pose.position.x, p.pose.position.y) for p in msg.poses]
-        self.get_logger().info(f"[Pure Pursuit] New path received, length={len(self.path)}")
-        if self.path:
-            # path가 들어오면 1회만 회전하도록 설정
-            self.rotating_to_target = True
-            self.rotation_done_once = False
+        self.get_logger().info(f"[Path] New path received, length={len(self.path)}")
 
     def get_robot_pose(self):
         try:
-            trans = self.tf_buffer.lookup_transform(
-                "map", "base_footprint", rclpy.time.Time())
+            trans = self.tf_buffer.lookup_transform("map", "base_footprint", rclpy.time.Time())
             x = trans.transform.translation.x
             y = trans.transform.translation.y
-
-            # quaternion → yaw
             q = trans.transform.rotation
-            yaw = math.atan2(2*(q.w*q.z + q.x*q.y),
-                             1 - 2*(q.y*q.y + q.z*q.z))
+            yaw = math.atan2(2*(q.w*q.z + q.x*q.y), 1 - 2*(q.y*q.y + q.z*q.z))
             return x, y, yaw
         except TransformException:
             return None
@@ -74,7 +74,6 @@ class PurePursuitTracker(Node):
         pose = self.get_robot_pose()
         if pose is None:
             return
-
         x, y, yaw = pose
 
         # --- Goal reached check ---
@@ -86,7 +85,7 @@ class PurePursuitTracker(Node):
             self.path = []
             return
 
-        # --- Initial rotation (1회만) ---
+        # --- Initial rotation (goal 들어올 때만 1회) ---
         if self.rotating_to_target and not self.rotation_done_once:
             tx, ty = self.path[-1]
             dx = tx - x
@@ -99,17 +98,15 @@ class PurePursuitTracker(Node):
             cmd.angular.z = max(min(angle_error * 2.0, self.max_w), -self.max_w)
             self.cmd_pub.publish(cmd)
 
-            # 회전 완료 판단
-            if abs(angle_error) < 0.05:  # 약 3도 이내
+            if abs(angle_error) < 0.05:  # 회전 완료 기준
                 self.rotating_to_target = False
-                self.rotation_done_once = True  # 1회 회전 완료
+                self.rotation_done_once = True
             return
 
         # --- Lookahead target tracking ---
         target = self.find_lookahead_target(x, y)
         if target is None:
             return
-
         tx, ty = target
         dx = tx - x
         dy = ty - y
@@ -117,10 +114,9 @@ class PurePursuitTracker(Node):
         angle_error = (target_angle - yaw + math.pi) % (2*math.pi) - math.pi
         dist = math.hypot(dx, dy)
 
-        # Pure Pursuit control law
+        # Pure Pursuit control
         v = min(self.max_v, dist * 0.8)
         w = max(min(angle_error * 2.0, self.max_w), -self.max_w)
-
         cmd = Twist()
         cmd.linear.x = v
         cmd.angular.z = w

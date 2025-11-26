@@ -3,7 +3,6 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     return LaunchDescription([
-        # APF Navigator
         Node(
             package='my_nav',
             executable='planner',
@@ -16,9 +15,9 @@ def generate_launch_description():
         ),
         # RViz
         #Node(
-         #   package='rviz2',
-          #  executable='rviz2',
-           # output='screen'
+        #    package='rviz2',
+        #    executable='rviz2',
+        #    output='screen'
         #),
     ])
 
