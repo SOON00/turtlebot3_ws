@@ -1,0 +1,41 @@
+[0.007s] Invoking command in '/home/soon/turtlebot3_ws/build/turtlebot3_simulations': CMAKE_PREFIX_PATH=/home/soon/turtlebot3_ws/install/turtlebot3_fake_node:/home/soon/turtlebot3_ws/install/turtlebot3_msgs:/home/soon/turtlebot3_ws/install/turtlebot3_manipulation_gazebo:/home/soon/turtlebot3_ws/install/turtlebot3_gazebo:/home/soon/turtlebot3_ws/install/turtlebot3_simulations:/home/soon/turtlebot3_ws/install/turtlebot3_description:/home/soon/turtlebot3_ws/install/turtlebot3_cartographer:/home/soon/turtlebot3_ws/install/turtlebot3_teleop:/home/soon/turtlebot3_ws/install/my_nav:/opt/ros/humble /usr/bin/cmake /home/soon/turtlebot3_ws/src/turtlebot3_simulations/turtlebot3_simulations -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/soon/turtlebot3_ws/install/turtlebot3_simulations
+[0.041s] -- The C compiler identification is GNU 11.4.0
+[0.074s] -- The CXX compiler identification is GNU 11.4.0
+[0.078s] -- Detecting C compiler ABI info
+[0.123s] -- Detecting C compiler ABI info - done
+[0.127s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.127s] -- Detecting C compile features
+[0.127s] -- Detecting C compile features - done
+[0.129s] -- Detecting CXX compiler ABI info
+[0.179s] -- Detecting CXX compiler ABI info - done
+[0.183s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.183s] -- Detecting CXX compile features
+[0.183s] -- Detecting CXX compile features - done
+[0.185s] -- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.276s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.311s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.369s] -- Configuring done
+[0.371s] -- Generating done
+[0.372s] -- Build files have been written to: /home/soon/turtlebot3_ws/build/turtlebot3_simulations
+[0.375s] Invoked command in '/home/soon/turtlebot3_ws/build/turtlebot3_simulations' returned '0': CMAKE_PREFIX_PATH=/home/soon/turtlebot3_ws/install/turtlebot3_fake_node:/home/soon/turtlebot3_ws/install/turtlebot3_msgs:/home/soon/turtlebot3_ws/install/turtlebot3_manipulation_gazebo:/home/soon/turtlebot3_ws/install/turtlebot3_gazebo:/home/soon/turtlebot3_ws/install/turtlebot3_simulations:/home/soon/turtlebot3_ws/install/turtlebot3_description:/home/soon/turtlebot3_ws/install/turtlebot3_cartographer:/home/soon/turtlebot3_ws/install/turtlebot3_teleop:/home/soon/turtlebot3_ws/install/my_nav:/opt/ros/humble /usr/bin/cmake /home/soon/turtlebot3_ws/src/turtlebot3_simulations/turtlebot3_simulations -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/soon/turtlebot3_ws/install/turtlebot3_simulations
+[0.376s] Invoking command in '/home/soon/turtlebot3_ws/build/turtlebot3_simulations': CMAKE_PREFIX_PATH=/home/soon/turtlebot3_ws/install/turtlebot3_fake_node:/home/soon/turtlebot3_ws/install/turtlebot3_msgs:/home/soon/turtlebot3_ws/install/turtlebot3_manipulation_gazebo:/home/soon/turtlebot3_ws/install/turtlebot3_gazebo:/home/soon/turtlebot3_ws/install/turtlebot3_simulations:/home/soon/turtlebot3_ws/install/turtlebot3_description:/home/soon/turtlebot3_ws/install/turtlebot3_cartographer:/home/soon/turtlebot3_ws/install/turtlebot3_teleop:/home/soon/turtlebot3_ws/install/my_nav:/opt/ros/humble /usr/bin/cmake --build /home/soon/turtlebot3_ws/build/turtlebot3_simulations -- -j12 -l12
+[0.400s] Invoked command in '/home/soon/turtlebot3_ws/build/turtlebot3_simulations' returned '0': CMAKE_PREFIX_PATH=/home/soon/turtlebot3_ws/install/turtlebot3_fake_node:/home/soon/turtlebot3_ws/install/turtlebot3_msgs:/home/soon/turtlebot3_ws/install/turtlebot3_manipulation_gazebo:/home/soon/turtlebot3_ws/install/turtlebot3_gazebo:/home/soon/turtlebot3_ws/install/turtlebot3_simulations:/home/soon/turtlebot3_ws/install/turtlebot3_description:/home/soon/turtlebot3_ws/install/turtlebot3_cartographer:/home/soon/turtlebot3_ws/install/turtlebot3_teleop:/home/soon/turtlebot3_ws/install/my_nav:/opt/ros/humble /usr/bin/cmake --build /home/soon/turtlebot3_ws/build/turtlebot3_simulations -- -j12 -l12
+[0.401s] Invoking command in '/home/soon/turtlebot3_ws/build/turtlebot3_simulations': CMAKE_PREFIX_PATH=/home/soon/turtlebot3_ws/install/turtlebot3_fake_node:/home/soon/turtlebot3_ws/install/turtlebot3_msgs:/home/soon/turtlebot3_ws/install/turtlebot3_manipulation_gazebo:/home/soon/turtlebot3_ws/install/turtlebot3_gazebo:/home/soon/turtlebot3_ws/install/turtlebot3_simulations:/home/soon/turtlebot3_ws/install/turtlebot3_description:/home/soon/turtlebot3_ws/install/turtlebot3_cartographer:/home/soon/turtlebot3_ws/install/turtlebot3_teleop:/home/soon/turtlebot3_ws/install/my_nav:/opt/ros/humble /usr/bin/cmake --install /home/soon/turtlebot3_ws/build/turtlebot3_simulations
+[0.405s] -- Install configuration: ""
+[0.405s] -- Execute custom install script
+[0.405s] -- Symlinking: /home/soon/turtlebot3_ws/install/turtlebot3_simulations/share/ament_index/resource_index/package_run_dependencies/turtlebot3_simulations
+[0.411s] -- Symlinking: /home/soon/turtlebot3_ws/install/turtlebot3_simulations/share/ament_index/resource_index/parent_prefix_path/turtlebot3_simulations
+[0.416s] -- Symlinking: /home/soon/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/environment/ament_prefix_path.sh
+[0.422s] -- Symlinking: /home/soon/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/environment/ament_prefix_path.dsv
+[0.427s] -- Symlinking: /home/soon/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/environment/path.sh
+[0.432s] -- Symlinking: /home/soon/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/environment/path.dsv
+[0.438s] -- Symlinking: /home/soon/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/local_setup.bash
+[0.443s] -- Symlinking: /home/soon/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/local_setup.sh
+[0.449s] -- Symlinking: /home/soon/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/local_setup.zsh
+[0.454s] -- Symlinking: /home/soon/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/local_setup.dsv
+[0.459s] -- Symlinking: /home/soon/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/package.dsv
+[0.464s] -- Symlinking: /home/soon/turtlebot3_ws/install/turtlebot3_simulations/share/ament_index/resource_index/packages/turtlebot3_simulations
+[0.469s] -- Symlinking: /home/soon/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/cmake/turtlebot3_simulationsConfig.cmake
+[0.474s] -- Symlinking: /home/soon/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/cmake/turtlebot3_simulationsConfig-version.cmake
+[0.479s] -- Symlinking: /home/soon/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/package.xml
+[0.486s] Invoked command in '/home/soon/turtlebot3_ws/build/turtlebot3_simulations' returned '0': CMAKE_PREFIX_PATH=/home/soon/turtlebot3_ws/install/turtlebot3_fake_node:/home/soon/turtlebot3_ws/install/turtlebot3_msgs:/home/soon/turtlebot3_ws/install/turtlebot3_manipulation_gazebo:/home/soon/turtlebot3_ws/install/turtlebot3_gazebo:/home/soon/turtlebot3_ws/install/turtlebot3_simulations:/home/soon/turtlebot3_ws/install/turtlebot3_description:/home/soon/turtlebot3_ws/install/turtlebot3_cartographer:/home/soon/turtlebot3_ws/install/turtlebot3_teleop:/home/soon/turtlebot3_ws/install/my_nav:/opt/ros/humble /usr/bin/cmake --install /home/soon/turtlebot3_ws/build/turtlebot3_simulations

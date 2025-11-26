@@ -1,1 +1,0 @@
-/home/soon/turtlebot3_ws/src/my_nav/launch/tb3_nav.launch.py

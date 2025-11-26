@@ -1,12 +1,1 @@
-from launch import LaunchDescription
-from launch_ros.actions import Node
-
-def generate_launch_description():
-    return LaunchDescription([
-        Node(
-            package='my_nav',
-            executable='costmap',
-            output='screen'
-        ),
-    ])
-
+/home/soon/turtlebot3_ws/build/my_nav/launch/costmap.launch.py
